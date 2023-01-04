@@ -1,3 +1,15 @@
 #adelaide-map {
     height: 100vh;
 }
+
+.control {
+    z-index: 10000;
+    border: 2px solid black;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
