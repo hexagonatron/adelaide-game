@@ -1,11 +1,13 @@
 const LOCAL_STORAGE_KEY = 'adelaide_game_state';
-const defaultState = {red: [], blue: [], green: []};
+const markers = [];
 const getChecked = () => {
     return document.querySelector("input[name=player]:checked").value;
 }
 
+const getDefaultState = () => ({ red: [], blue: [], green: [] });
+
 const loadState = () => {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || defaultState ;
+    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || getDefaultState();
 }
 
 const saveState = (state) => {
@@ -13,7 +15,7 @@ const saveState = (state) => {
 }
 
 const updateState = (suburb, newColor) => {
-    console.log({suburb, newColor});
+    console.log({ suburb, newColor });
     const currState = loadState();
     currState.red = currState.red.filter(s => s != suburb);
     currState.blue = currState.blue.filter(s => s != suburb);
@@ -66,7 +68,7 @@ const suburbLayer = L.geoJSON(suburbs, {
         layer.addEventListener('click', (e) => {
             const checked = getChecked();
             const currStyle = hasSavedStyle(feature.properties.suburb);
-            console.log({checked, currStyle});
+            console.log({ checked, currStyle });
             if (checked === currStyle) {
                 updateState(feature.properties.suburb)
                 layer.setStyle(getStyle());
@@ -74,11 +76,46 @@ const suburbLayer = L.geoJSON(suburbs, {
             }
             layer.setStyle(getStyle(checked));
             updateState(feature.properties.suburb, checked);
-        })
+        });
+        const marker = L.circle(feature.properties.center, { radius: 15, color: 'green', className: 'suburbCircle' });
+        marker.bindTooltip(feature.properties.suburb, {className: 'customTooltip'});
+        // marker.on('mouseover', (e) => {
+        //     console.log(e.sourceTarget.openPopup());
+            
+        // });
+        // marker.on('mouseout', (e) => {
+        //     console.log(e.sourceTarget.closePopup());
+            
+        // });
+        markers.push(marker);
     }
 }).addTo(map);
 
 document.querySelector('#clearBtn').addEventListener('click', (event) => {
-    saveState(defaultState);
+    saveState(getDefaultState());
     suburbLayer.resetStyle();
-})
+});
+
+const getDecimal = (deg, min, sec, sign) => {
+    return (deg + (min / 60) + (sec / 3600)) * sign;
+}
+//34 48 S
+//138 30 E
+for (let i = 48; i <= 70; i++) {
+    for (let j = 30; j <= 42; j++) {
+        const marker = L.circle([getDecimal(34, i, 0, -1), getDecimal(138, j, 0, 1)], { radius: 15 });
+        markers.push(marker);
+    }
+}
+let markersOn = false;
+const toggleMarkers = () => {
+    if (markersOn) {
+        markers.forEach(m => m.removeFrom(map));
+    } else {
+        markers.forEach(m => m.addTo(map));
+    }
+    markersOn = !markersOn;
+}
+toggleMarkers();
+
+document.querySelector("#markerBtn").addEventListener('click', toggleMarkers);
