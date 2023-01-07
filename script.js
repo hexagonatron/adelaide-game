@@ -87,7 +87,7 @@ const suburbLayer = L.geoJSON(suburbs, {
         //     console.log(e.sourceTarget.closePopup());
             
         // });
-        markers.push(marker);
+        // markers.push(marker);
     }
 }).addTo(map);
 
