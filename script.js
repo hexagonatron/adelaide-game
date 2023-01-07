@@ -77,8 +77,8 @@ const suburbLayer = L.geoJSON(suburbs, {
             layer.setStyle(getStyle(checked));
             updateState(feature.properties.suburb, checked);
         });
-        const marker = L.circle(feature.properties.center, { radius: 15, color: 'green', className: 'suburbCircle' });
-        marker.bindTooltip(feature.properties.suburb, {className: 'customTooltip'});
+        // const marker = L.circle(feature.properties.center, { radius: 15, color: 'green', className: 'suburbCircle' });
+        // marker.bindTooltip(feature.properties.suburb, {className: 'customTooltip'});
         // marker.on('mouseover', (e) => {
         //     console.log(e.sourceTarget.openPopup());
             
